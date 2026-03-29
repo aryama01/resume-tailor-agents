@@ -9,9 +9,9 @@ const { sendEmail } = require("./emailer");
 const INPUTS = path.join(__dirname, "../inputs");
 
 async function main() {
-  console.log("=== Resume Tailor Agent Starting ===\n");
+  console.log("Resume Tailor Agent Starting ...\n");
 
-  // ── Load all inputs ──────────────────────────────────────────────────────
+  //Load all inputs 
   let links, jobs, mergedJobs, resumeText;
 
   try {
@@ -20,8 +20,8 @@ async function main() {
     mergedJobs = mergeJobData(links, jobs);
     resumeText = await readResume(path.join(INPUTS, "candidate_resume.docx"));
     console.log("Jobs type:", typeof jobs);
-console.log("Is jobs array:", Array.isArray(jobs));
-console.log("Jobs preview:", jobs);
+    console.log("Is jobs array:", Array.isArray(jobs));
+    console.log("Jobs preview:", jobs);
   } catch (err) {
     console.error("Fatal: Could not load input files.");
     console.error(err.message);
@@ -32,25 +32,21 @@ console.log("Jobs preview:", jobs);
 
   const results = { success: [], failed: [] };
 
-  // ── Process each job independently ──────────────────────────────────────
+  // Process each job independently 
   for (const job of mergedJobs) {
-    console.log(`--- Processing: ${job.title} at ${job.company} ---`);
+    console.log(` Processing: ${job.title} at ${job.company}`);
 
     try {
-      // Step 1: Tailor resume via Gemini
-      console.log(`  [1/3] Calling Gemini API...`);
+      console.log(`Calling Gemini API`);
       const tailoredText = await tailorResume(resumeText, job);
 
-      // Small delay to respect Gemini free tier rate limits
-      await new Promise((res) => setTimeout(res, 2000));
+      await new Promise((res) => setTimeout(res, 10000));
 
-      // Step 2: Save as .docx
-      console.log(`  [2/3] Generating document...`);
+      console.log(`Generating document`);
       const filename = makeFilename(job);
       const filePath = await saveAsDocx(tailoredText, filename);
 
-      // Step 3: Send email
-      console.log(`  [3/3] Sending email...`);
+      console.log(`Sending email`);
       await sendEmail(job, filePath);
 
       results.success.push(job.title);
