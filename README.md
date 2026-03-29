@@ -167,4 +167,4 @@ Files are named `resume_{title}_{company}.docx` (slugified) so they are human-re
 
 ## Demo Video
 
-[Paste your Loom / YouTube / Google Drive link here]
+- video_link= https://www.loom.com/share/3020822f77a84a4cbd398fe1e59f88c4 
